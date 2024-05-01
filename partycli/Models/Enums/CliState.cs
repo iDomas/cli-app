@@ -1,6 +1,6 @@
 ﻿namespace partycli.Models;
 
-public enum CliStates
+public enum CliState
 {
     None = 0,
     ServerList = 1,

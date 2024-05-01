@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using partycli.Services.Persistence;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -21,15 +22,36 @@ public sealed class ServerListCommand : AsyncCommand<ServerListCommand.ServerLis
         public string? CountryOption { get; set; }
     }
 
-    public override Task<int> ExecuteAsync(CommandContext context, ServerListCommandSettings settings)
+    private readonly IServerPersistenceService _serverService;
+    
+    public ServerListCommand(IServerPersistenceService serverService)
+    {
+        _serverService = serverService;
+    }
+    
+    public override async Task<int> ExecuteAsync(CommandContext context, ServerListCommandSettings settings)
     {
         if (settings.TcpOption == true)
         {
-            return Task.FromResult(1);
+            AnsiConsole.MarkupLine($"TCP option: {settings.TcpOption}");
+            return 0;
         }
-        AnsiConsole.MarkupLine($"setting: {settings?.TcpOption}");
-        AnsiConsole.MarkupLine($"setting: {settings?.LocalOption}");
-        AnsiConsole.MarkupLine($"setting: {settings?.CountryOption}");
-        return Task.FromResult(0);
+        
+        if (settings.LocalOption == true)
+        {
+            AnsiConsole.MarkupLine($"Local option: {settings.LocalOption}");
+            return 0;
+        }
+        
+        if (!string.IsNullOrWhiteSpace(settings.CountryOption))
+        {
+            AnsiConsole.MarkupLine($"Country option: {settings.CountryOption}");
+            return 0;
+        }
+        
+        var servers = _serverService.GetServers();
+        AnsiConsole.MarkupLine($"Servers count: {servers.Count()}");
+        
+        return 0;
     }
 }
