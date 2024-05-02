@@ -11,14 +11,14 @@ public class ServerService(
     INordVpnApiService nordVpnApiService,
     ILogService logService) : IServerService
 {
-    public async Task<IEnumerable<ServerModel>> GetServers()
+    public async Task<IEnumerable<ServerModel>> GetServersAsync()
     { 
         if (await SaveServersFromApi())
             AnsiConsole.MarkupLine("[green]Saved to context...[/]");
-        return serverRepository.GetServers().AsEnumerable();
+        return await Task.Run(() => serverRepository.GetServers().AsEnumerable());
     }
 
-    public async Task<bool> SaveServersFromApi()
+    private async Task<bool> SaveServersFromApi()
     {
         try
         {

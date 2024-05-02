@@ -2,6 +2,7 @@
 using partycli.Database;
 using partycli.Services.Api;
 using partycli.Services.App;
+using partycli.Services.UI;
 
 namespace partycli.Services;
 
@@ -16,6 +17,7 @@ public static class ServiceRegistry
             .AddPartyCliContext()
             .AddSingleton<INordVpnApiService, NordVpnApiService>()
             .AddSingleton<IServerService, ServerService>()
-            .AddSingleton<ILogService, LogService>();
+            .AddSingleton<ILogService, LogService>()
+            .AddSingleton<IUiService, UiService>();
     }
 }

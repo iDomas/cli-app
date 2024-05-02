@@ -32,7 +32,7 @@ public class ServerServiceTest
         _nordVpnApiServiceMock.Setup(x => x.GetAllServersListAsync())
             .ReturnsAsync(Enumerable.Empty<ServerModel>());
 
-        var result = await _serverService.GetServers();
+        var result = await _serverService.GetServersAsync();
         
         result.Should().NotBeNull();
         result.Count().Should().Be(0);

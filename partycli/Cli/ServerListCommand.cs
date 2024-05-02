@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using partycli.Database.init;
 using partycli.Services.App;
+using partycli.Services.UI;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -24,12 +25,15 @@ public sealed class ServerListCommand : AsyncCommand<ServerListCommand.ServerLis
     }
 
     private readonly IServerService _serverService;
+    private readonly IUiService _uiService;
     
     public ServerListCommand(IServerService serverService,
-        IInitDatabaseService initDbService)
+        IInitDatabaseService initDbService,
+        IUiService uiService)
     {
         _serverService = serverService;
         initDbService.Init();
+        _uiService = uiService;
     }
     
     public override async Task<int> ExecuteAsync(CommandContext context, ServerListCommandSettings settings)
@@ -42,7 +46,7 @@ public sealed class ServerListCommand : AsyncCommand<ServerListCommand.ServerLis
         
         if (settings.LocalOption == true)
         {
-            AnsiConsole.MarkupLine($"Local option: {settings.LocalOption}");
+            await _uiService.DisplayLocalServers();
             return 0;
         }
         
@@ -52,7 +56,7 @@ public sealed class ServerListCommand : AsyncCommand<ServerListCommand.ServerLis
             return 0;
         }
         
-        var servers = _serverService.GetServers().Result;
+        var servers = _serverService.GetServersAsync().Result;
         AnsiConsole.MarkupLine($"Servers count: {servers.Count()}");
         
         return 0;

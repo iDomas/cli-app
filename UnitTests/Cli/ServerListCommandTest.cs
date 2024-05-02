@@ -5,6 +5,7 @@ using FluentAssertions;
 using Moq;
 using partycli.Database.init;
 using partycli.Services.App;
+using partycli.Services.UI;
 using Spectre.Console.Cli;
 
 namespace UnitTests.Cli;
@@ -13,6 +14,7 @@ public class ServerListCommandTest
 {
     private readonly Mock<IServerService> _serverServiceMock = new();
     private readonly Mock<IInitDatabaseService> _initDatabaseServiceMock = new();
+    private readonly Mock<IUiService> _uiServiceMock = new();
     
     private readonly IRemainingArguments _remainingArgs = new Mock<IRemainingArguments>().Object;
     
@@ -47,7 +49,8 @@ public class ServerListCommandTest
     {
         var command = new ServerListCommand(
             _serverServiceMock.Object, 
-            _initDatabaseServiceMock.Object
+            _initDatabaseServiceMock.Object,
+            _uiServiceMock.Object
         );
         
         var context = new CommandContext(args, _remainingArgs, "server_list", null);
