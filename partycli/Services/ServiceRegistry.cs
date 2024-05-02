@@ -15,6 +15,7 @@ public static class ServiceRegistry
             .AddLogging()
             .AddPartyCliContext()
             .AddSingleton<INordVpnApiService, NordVpnApiService>()
-            .AddSingleton<IServerService, ServerService>();
+            .AddSingleton<IServerService, ServerService>()
+            .AddSingleton<ILogService, LogService>();
     }
 }

@@ -9,18 +9,18 @@ namespace UnitTests.Services.App;
 
 public class ServerServiceTest
 {
-    private readonly Mock<IServerRepository> _serverRepositoryMock;
-    private readonly Mock<INordVpnApiService> _nordVpnApiServiceMock;
+    private readonly Mock<IServerRepository> _serverRepositoryMock = new();
+    private readonly Mock<INordVpnApiService> _nordVpnApiServiceMock = new();
+    private readonly Mock<ILogService> _logServiceMock = new();
 
     private readonly IServerService _serverService;
 
     public ServerServiceTest()
     {
-        _serverRepositoryMock = new Mock<IServerRepository>();
-        _nordVpnApiServiceMock = new Mock<INordVpnApiService>();
         _serverService = new ServerService(
             _serverRepositoryMock.Object,
-            _nordVpnApiServiceMock.Object
+            _nordVpnApiServiceMock.Object,
+            _logServiceMock.Object
         );
     }
 
@@ -33,7 +33,7 @@ public class ServerServiceTest
             .ReturnsAsync(Enumerable.Empty<ServerModel>());
 
         var result = await _serverService.GetServers();
-
+        
         result.Should().NotBeNull();
         result.Count().Should().Be(0);
     }

@@ -5,5 +5,5 @@ namespace partycli.Database.Repository;
 public interface ILogRepository
 {
     IQueryable<LogModel> GetLogs();
-    void AddLog(LogModel log);
+    Task AddLog(LogModel log);
 }

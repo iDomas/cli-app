@@ -9,9 +9,9 @@ public class LogRepository(PartyCliDbContext context) : ILogRepository
         return context.Logs.AsQueryable();
     }
 
-    public void AddLog(LogModel log)
+    public async Task AddLog(LogModel log)
     {
-        context.Logs.Add(log);
-        context.SaveChanges();
+        await context.Logs.AddAsync(log);
+        await context.SaveChangesAsync();
     }
 }

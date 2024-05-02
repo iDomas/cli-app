@@ -6,6 +6,6 @@ public class LogModel
 {
     [Key]
     public int Id { get; set; }
-    public string Action { get; set; }
+    public int Action { get; set; }
     public DateTime Time { get; set; }
 }
