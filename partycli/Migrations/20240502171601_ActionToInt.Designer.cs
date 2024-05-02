@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using partycli.Database;
 
@@ -10,31 +11,14 @@ using partycli.Database;
 namespace partycli.Migrations
 {
     [DbContext(typeof(PartyCliDbContext))]
-    partial class PartyCliDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240502171601_ActionToInt")]
+    partial class ActionToInt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.4");
-
-            modelBuilder.Entity("partycli.Models.Entities.ConfigModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ServerId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ServerId");
-
-                    b.ToTable("Configs");
-                });
 
             modelBuilder.Entity("partycli.Models.Entities.LogModel", b =>
                 {
@@ -77,17 +61,6 @@ namespace partycli.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Servers");
-                });
-
-            modelBuilder.Entity("partycli.Models.Entities.ConfigModel", b =>
-                {
-                    b.HasOne("partycli.Models.Entities.ServerModel", "Server")
-                        .WithMany()
-                        .HasForeignKey("ServerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Server");
                 });
 #pragma warning restore 612, 618
         }

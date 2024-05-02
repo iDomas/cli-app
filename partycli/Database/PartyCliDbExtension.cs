@@ -13,6 +13,7 @@ public static class PartyCliDbExtension
                 .AddDbContext<PartyCliDbContext>()
                 .AddSingleton<IInitDatabaseService, InitDatabaseService>()
                 .AddSingleton<ILogRepository, LogRepository>()
-                .AddSingleton<IServerRepository, ServerRepository>();
+                .AddSingleton<IServerRepository, ServerRepository>()
+                .AddSingleton<IConfigRepository, ConfigRepository>();
     }
 }

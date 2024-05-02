@@ -7,6 +7,8 @@ public class PartyCliDbContext : DbContext
 {
     public virtual DbSet<LogModel> Logs { get; set; }
     public virtual DbSet<ServerModel> Servers { get; set; }
+    
+    public virtual DbSet<ConfigModel> Configs { get; set; }
 
     private readonly string FileName = "partycli.db";
     
