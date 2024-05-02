@@ -1,4 +1,5 @@
-﻿using Spectre.Console;
+﻿using partycli.Database.init;
+using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace partycli.cli;
@@ -10,9 +11,14 @@ public class ConfigCommand: AsyncCommand<ConfigCommand.ConfigCommandSettings>
         [CommandOption("-c|--country <country>")]
         public string? country { get; set; }
     }
-
-    public override Task<int> ExecuteAsync(CommandContext context, ConfigCommandSettings settings)
+    
+    public ConfigCommand(IInitDatabaseService initDbService)
     {
-        return Task.FromResult<int>(0);
+        initDbService.Init();
+    }
+    
+    public override async Task<int> ExecuteAsync(CommandContext context, ConfigCommandSettings settings)
+    {
+        return 0;
     }
 }

@@ -4,23 +4,16 @@ using ArgumentException = System.ArgumentException;
 
 namespace partycli.Services.Registrar;
 
-public sealed class TypeRegistrar : ITypeRegistrar
+public sealed class TypeRegistrar(IServiceCollection builder) : ITypeRegistrar
 {
-    private readonly IServiceCollection _builder;
-    
-    public TypeRegistrar(IServiceCollection builder)
-    {
-        _builder = builder;
-    }
-    
     public void Register(Type service, Type implementation)
     {
-        _builder.AddSingleton(service, implementation);
+        builder.AddSingleton(service, implementation);
     }
 
     public void RegisterInstance(Type service, object implementation)
     {
-        _builder.AddSingleton(service, implementation);
+        builder.AddSingleton(service, implementation);
     }
 
     public void RegisterLazy(Type service, Func<object> factory)
@@ -28,11 +21,11 @@ public sealed class TypeRegistrar : ITypeRegistrar
         if (factory is null)
             throw new ArgumentException("Factory func not passed", nameof(factory));
         
-        _builder.AddSingleton(service, (provider => factory()));
+        builder.AddSingleton(service, (provider => factory()));
     }
 
     public ITypeResolver Build()
     {
-        return new TypeResolver(_builder.BuildServiceProvider());
+        return new TypeResolver(builder.BuildServiceProvider());
     }
 }

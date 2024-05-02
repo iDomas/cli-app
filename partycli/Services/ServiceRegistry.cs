@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using partycli.Database;
 using partycli.Services.Api;
-using partycli.Services.Persistence;
+using partycli.Services.App;
 
 namespace partycli.Services;
 
@@ -15,6 +15,6 @@ public static class ServiceRegistry
             .AddLogging()
             .AddPartyCliContext()
             .AddSingleton<INordVpnApiService, NordVpnApiService>()
-            .AddSingleton<IServerPersistenceService, ServerPersistenceService>();
+            .AddSingleton<IServerService, ServerService>();
     }
 }

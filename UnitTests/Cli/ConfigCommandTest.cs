@@ -1,11 +1,15 @@
 ﻿using FluentAssertions;
+using Moq;
 using partycli.cli;
+using partycli.Database.init;
 using Spectre.Console.Testing;
 
 namespace UnitTests.Cli;
 
 public class ConfigCommandTest
 {
+    private readonly Mock<IInitDatabaseService> _initDatabaseServiceMock = new();
+    
     [Fact]
     public void ConfigCommand_Config_Return_0()
     {

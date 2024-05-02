@@ -1,5 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using partycli.Database.init;
 using partycli.Database.Repository;
 
 namespace partycli.Database;
@@ -11,6 +11,7 @@ public static class PartyCliDbExtension
         return
             services
                 .AddDbContext<PartyCliDbContext>()
+                .AddSingleton<IInitDatabaseService, InitDatabaseService>()
                 .AddSingleton<ILogRepository, LogRepository>()
                 .AddSingleton<IServerRepository, ServerRepository>();
     }

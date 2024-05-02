@@ -5,13 +5,20 @@ using Spectre.Console;
 
 namespace partycli.Services.Api;
 
-public sealed class NordVpnApiService(HttpClient client) : INordVpnApiService
+public sealed class NordVpnApiService : INordVpnApiService
 {
-    private const string BaseUrl = "https://api.nordvpn.com/server";
+    private const string BaseUrl = "https://api.nordvpn.com/v1/servers";
+
+    private readonly HttpClient _client;
+
+    public NordVpnApiService()
+    {
+        _client = new HttpClient();
+    }
     
     public async Task<IEnumerable<ServerModel>> GetAllServersListAsync()
     {
-        var response = await client.GetAsync(BaseUrl);
+        var response = await _client.GetAsync(BaseUrl);
         if (response.StatusCode != HttpStatusCode.OK)
         {
             AnsiConsole.MarkupLine($"[red]Failed to get servers list: {response.StatusCode}[/]");

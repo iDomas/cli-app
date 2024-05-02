@@ -1,7 +1,6 @@
 ﻿using partycli.cli;
 using partycli.Services;
 using partycli.Services.Registrar;
-using Spectre.Console;
 using Spectre.Console.Cli;
 
 var services = ServiceRegistry.RegisterServices();

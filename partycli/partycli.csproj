@@ -24,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Services\Display\" />
+      <Folder Include="Services\ui\" />
     </ItemGroup>
 
 </Project>

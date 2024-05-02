@@ -2,25 +2,18 @@
 
 namespace partycli.Services.Registrar;
 
-public class TypeResolver : ITypeResolver, IDisposable
+public class TypeResolver(IServiceProvider serviceProvider) : ITypeResolver, IDisposable
 {
-    private IServiceProvider _provider;
-
-    public TypeResolver(IServiceProvider serviceProvider)
-    {
-        _provider = serviceProvider;
-    }
-    
     public object? Resolve(Type? type)
     {
-        if (type == null)
-            return null;
-        return _provider.GetService(type);
+        return type == null 
+            ? null 
+            : serviceProvider.GetService(type);
     }
 
     public void Dispose()
     {
-        if (_provider is IDisposable disposable)
+        if (serviceProvider is IDisposable disposable)
             disposable.Dispose();
     }
 }

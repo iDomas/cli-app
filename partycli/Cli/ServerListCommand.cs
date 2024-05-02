@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
-using partycli.Services.Persistence;
+using partycli.Database.init;
+using partycli.Services.App;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -22,11 +23,13 @@ public sealed class ServerListCommand : AsyncCommand<ServerListCommand.ServerLis
         public string? CountryOption { get; set; }
     }
 
-    private readonly IServerPersistenceService _serverService;
+    private readonly IServerService _serverService;
     
-    public ServerListCommand(IServerPersistenceService serverService)
+    public ServerListCommand(IServerService serverService,
+        IInitDatabaseService initDbService)
     {
         _serverService = serverService;
+        initDbService.Init();
     }
     
     public override async Task<int> ExecuteAsync(CommandContext context, ServerListCommandSettings settings)
@@ -49,7 +52,7 @@ public sealed class ServerListCommand : AsyncCommand<ServerListCommand.ServerLis
             return 0;
         }
         
-        var servers = _serverService.GetServers();
+        var servers = _serverService.GetServers().Result;
         AnsiConsole.MarkupLine($"Servers count: {servers.Count()}");
         
         return 0;

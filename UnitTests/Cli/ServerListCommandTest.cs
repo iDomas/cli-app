@@ -1,13 +1,28 @@
-﻿using partycli.cli;
+﻿using System.Runtime.CompilerServices;
+using partycli.cli;
 using Spectre.Console.Testing;
 using FluentAssertions;
+using Moq;
+using partycli.Database.init;
+using partycli.Services.App;
+using Spectre.Console.Cli;
 
 namespace UnitTests.Cli;
 
 public class ServerListCommandTest
 {
+    private readonly Mock<IServerService> _serverServiceMock = new();
+    private readonly Mock<IInitDatabaseService> _initDatabaseServiceMock = new();
+    
+    private readonly IRemainingArguments _remainingArgs = new Mock<IRemainingArguments>().Object;
+    
+    public ServerListCommandTest()
+    {
+        _initDatabaseServiceMock.Setup(x => x.Init());
+    }
+
     [Fact]
-    public void ServerListCommand_ServerList_Return_0()
+    public void ServerListCommand_Return_0()
     {
         var app = new CommandAppTester();
         app.Configure(config =>
@@ -20,48 +35,26 @@ public class ServerListCommandTest
         result.ExitCode.Should().Be(0);
     }
     
-    [Fact]
-    public void ServerListCommand_ServerList_TcpOption_Return_0()
+    [Theory]
+    [InlineData("server_list")]
+    [InlineData("server_list", "-t")]
+    [InlineData("server_list", "--TCP")]
+    [InlineData("server_list", "-l")]
+    [InlineData("server_list", "--local")]
+    [InlineData("server_list", "-c", "US")]
+    [InlineData("server_list", "--country", "US")]
+    public async Task ServerListCommand_ServerListWithOptions_Return_0(params string[] args)
     {
-        var app = new CommandAppTester();
-        app.Configure(config =>
-        {
-            config.AddCommand<ServerListCommand>("server_list");
-        });
+        var command = new ServerListCommand(
+            _serverServiceMock.Object, 
+            _initDatabaseServiceMock.Object
+        );
         
-        var args = new []{"server_list", "-t"}; 
-        var result = app.Run(args);
+        var context = new CommandContext(args, _remainingArgs, "server_list", null);
 
-        result.ExitCode.Should().Be(0);
+        var result = await command.ExecuteAsync(context, new ServerListCommand.ServerListCommandSettings());
+        
+        result.Should().Be(0);
     }
     
-    [Fact]
-    public void ServerListCommand_ServerList_LocalOption_Return_0()
-    {
-        var app = new CommandAppTester();
-        app.Configure(config =>
-        {
-            config.AddCommand<ServerListCommand>("server_list");
-        });
-        
-        var args = new []{"server_list", "-l"}; 
-        var result = app.Run(args);
-
-        result.ExitCode.Should().Be(0);
-    }
-    
-    [Fact]
-    public void ServerListCommand_ServerList_CountryOption_Return_0()
-    {
-        var app = new CommandAppTester();
-        app.Configure(config =>
-        {
-            config.AddCommand<ServerListCommand>("server_list");
-        });
-        
-        var args = new []{"server_list", "-c", "US"}; 
-        var result = app.Run(args);
-
-        result.ExitCode.Should().Be(0);
-    }
 }
