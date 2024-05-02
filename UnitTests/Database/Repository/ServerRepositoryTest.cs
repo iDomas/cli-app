@@ -50,6 +50,8 @@ public class ServerRepositoryTest
         servers.First().Load.Should().Be(1);
         servers.First().Name.Should().Be("Test");
         servers.First().Status.Should().Be("offline");
+        
+        
     }
     
     [Fact]

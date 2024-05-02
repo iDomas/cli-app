@@ -1,6 +1,8 @@
 using FluentAssertions;
+using Moq;
 using partycli.Database.Repository;
 using partycli.Models.Entities;
+using partycli.Services.App;
 
 namespace UnitTests.Database.Repository;
 
@@ -9,6 +11,8 @@ public class ConfigRepositoryTest
     private readonly PartyCliInMemoryDatabaseContext _context;
     private readonly IConfigRepository _configRepository;
     
+    private readonly Mock<ILogService> _logServiceMock = new();
+    
     public ConfigRepositoryTest()
     {
         _context = new PartyCliInMemoryDatabaseContext();
@@ -16,7 +20,7 @@ public class ConfigRepositoryTest
         if (!_context.Database.EnsureCreated())
             throw new AggregateException("InMemory database not created.");
                 
-        _configRepository = new ConfigRepository(_context);
+        _configRepository = new ConfigRepository(_context, _logServiceMock.Object);
     }
     
     [Fact]

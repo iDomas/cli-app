@@ -1,10 +1,13 @@
 using Microsoft.EntityFrameworkCore;
+using partycli.Models.Constant;
 using partycli.Models.Entities;
+using partycli.Services.App;
 
 
 namespace partycli.Database.Repository;
 
-public class ConfigRepository(PartyCliDbContext context) : IConfigRepository
+public class ConfigRepository(PartyCliDbContext context,
+    ILogService logService) : IConfigRepository
 {
     public async Task<ConfigModel?> GetActiveConfigAsync()
     {
@@ -19,6 +22,8 @@ public class ConfigRepository(PartyCliDbContext context) : IConfigRepository
                 ServerId = serverId,
                 IsActive = true
             });
+
+        await logService.Log(ActionType.ConfigSaved);
 
         await context.SaveChangesAsync();
     }
