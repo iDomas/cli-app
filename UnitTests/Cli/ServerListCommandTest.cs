@@ -1,18 +1,15 @@
-﻿using System.Runtime.CompilerServices;
-using partycli.cli;
-using Spectre.Console.Testing;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Moq;
+using partycli.cli;
 using partycli.Database.init;
-using partycli.Services.App;
 using partycli.Services.UI;
 using Spectre.Console.Cli;
+using Spectre.Console.Testing;
 
 namespace UnitTests.Cli;
 
 public class ServerListCommandTest
 {
-    private readonly Mock<IServerService> _serverServiceMock = new();
     private readonly Mock<IInitDatabaseService> _initDatabaseServiceMock = new();
     private readonly Mock<IUiService> _uiServiceMock = new();
     
@@ -45,17 +42,16 @@ public class ServerListCommandTest
     [InlineData("server_list", "--local")]
     [InlineData("server_list", "-c", "US")]
     [InlineData("server_list", "--country", "US")]
-    public async Task ServerListCommand_ServerListWithOptions_Return_0(params string[] args)
+    public void ServerListCommand_ServerListWithOptions_Return_0(params string[] args)
     {
         var command = new ServerListCommand(
-            _serverServiceMock.Object, 
             _initDatabaseServiceMock.Object,
             _uiServiceMock.Object
         );
         
         var context = new CommandContext(args, _remainingArgs, "server_list", null);
 
-        var result = await command.ExecuteAsync(context, new ServerListCommand.ServerListCommandSettings());
+        var result = command.Execute(context, new ServerListCommand.ServerListCommandSettings());
         
         result.Should().Be(0);
     }

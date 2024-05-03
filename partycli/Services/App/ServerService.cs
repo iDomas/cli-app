@@ -1,6 +1,7 @@
 using partycli.Database.Repository;
 using partycli.Models.Constant;
 using partycli.Models.Entities;
+using partycli.Models.Enums;
 using partycli.Services.Api;
 using Spectre.Console;
 
@@ -11,26 +12,62 @@ public class ServerService(
     INordVpnApiService nordVpnApiService,
     ILogService logService) : IServerService
 {
+    private const string SavedToContextStr = "[green]Saved to context...[/]";
+    private const string FailedToFetchApi = "[red]Failed to get servers from API[/]";
+    
     public async Task<IEnumerable<ServerModel>> GetServersAsync()
     { 
         if (await SaveServersFromApi())
-            AnsiConsole.MarkupLine("[green]Saved to context...[/]");
+            AnsiConsole.MarkupLine(SavedToContextStr);
         return await Task.Run(() => serverRepository.GetServers().AsEnumerable());
+    }
+
+    public async Task<IEnumerable<ServerModel>> GetLocalServersAsync()
+    {
+        return await Task.Run(() => serverRepository.GetServers().AsEnumerable());
+    }
+
+    public async Task<IEnumerable<ServerModel>> GetAllServerByCountryListAsync(CountryCode countryCode)
+    {
+        var servers = await SaveServersByCountry(countryCode);
+        AnsiConsole.MarkupLine(SavedToContextStr);
+        return servers;
+    }
+
+    public Task<IEnumerable<ServerModel>> GetAllServerByProtocolListAsync()
+    {
+        throw new NotImplementedException();
     }
 
     private async Task<bool> SaveServersFromApi()
     {
         try
         {
-            var serversApi = await nordVpnApiService.GetAllServersListAsync();
-            await serverRepository.AddServers(serversApi);
+            var servers = await nordVpnApiService.GetAllServersListAsync();
+            await serverRepository.AddServers(servers);
             await logService.Log(ActionType.ServerSaved);
             return true;
         }
         catch
         {
-            AnsiConsole.MarkupLine("[red]Failed to get servers from API[/]");
+            AnsiConsole.MarkupLine(FailedToFetchApi);
             return false;
         }
     }
+
+    private async Task<IEnumerable<ServerModel>> SaveServersByCountry(CountryCode countryCode)
+    {
+        try
+        {
+            var servers = await nordVpnApiService.GetAllServerByCountryListAsync(countryCode);
+            await serverRepository.AddServers(servers);
+            await logService.Log(ActionType.ServerSaved);
+            return servers;
+        }
+        catch
+        {
+            AnsiConsole.MarkupLine(FailedToFetchApi);
+            return Enumerable.Empty<ServerModel>();
+        }
+    } 
 }

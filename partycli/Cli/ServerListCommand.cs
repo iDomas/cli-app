@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel;
 using partycli.Database.init;
-using partycli.Services.App;
+using partycli.Models;
+using partycli.Models.Enums;
 using partycli.Services.UI;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace partycli.cli;
 
-public sealed class ServerListCommand : AsyncCommand<ServerListCommand.ServerListCommandSettings>
+public sealed class ServerListCommand : Command<ServerListCommand.ServerListCommandSettings>
 {
     public sealed class ServerListCommandSettings : CommandSettings
     {
@@ -23,20 +24,18 @@ public sealed class ServerListCommand : AsyncCommand<ServerListCommand.ServerLis
         [Description("Country option")]
         public string? CountryOption { get; set; }
     }
-
-    private readonly IServerService _serverService;
+    
     private readonly IUiService _uiService;
     
-    public ServerListCommand(IServerService serverService,
+    public ServerListCommand(
         IInitDatabaseService initDbService,
         IUiService uiService)
     {
-        _serverService = serverService;
         initDbService.Init();
         _uiService = uiService;
     }
     
-    public override async Task<int> ExecuteAsync(CommandContext context, ServerListCommandSettings settings)
+    public override int Execute(CommandContext context, ServerListCommandSettings settings)
     {
         if (settings.TcpOption == true)
         {
@@ -46,19 +45,32 @@ public sealed class ServerListCommand : AsyncCommand<ServerListCommand.ServerLis
         
         if (settings.LocalOption == true)
         {
-            await _uiService.DisplayLocalServers();
+            _uiService.DisplayServers(new DisplayQuery(DisplayType.LocalServers, CountryCode.None));
             return 0;
         }
         
         if (!string.IsNullOrWhiteSpace(settings.CountryOption))
         {
-            AnsiConsole.MarkupLine($"Country option: {settings.CountryOption}");
+            _uiService.DisplayServers(new DisplayQuery(
+                DisplayType.CountryServers,
+                GetCountry(settings.CountryOption)));
             return 0;
         }
-        
-        var servers = _serverService.GetServersAsync().Result;
-        AnsiConsole.MarkupLine($"Servers count: {servers.Count()}");
-        
+
+        _uiService.DisplayServers(
+            new DisplayQuery(DisplayType.AllServers, CountryCode.None));
         return 0;
     }
+    
+    private static CountryCode GetCountry(string country)
+    {
+        var countries = Enum.GetNames<CountryCode>();
+        if (!countries.Contains(country, StringComparer.OrdinalIgnoreCase))
+        {
+            AnsiConsole.MarkupLine($"[red]Invalid country code: {country}[/]");
+            throw new ArgumentException("Invalid country code.");
+        }
+        var ignoreCase = country.ToLowerInvariant();
+        return Enum.Parse<CountryCode>(ignoreCase, true);
+    } 
 }

@@ -1,36 +1,41 @@
 using System.Net;
 using System.Text.Json;
 using partycli.Models.Entities;
+using partycli.Models.Enums;
 using Spectre.Console;
+using HttpClient = System.Net.Http.HttpClient;
 
 namespace partycli.Services.Api;
 
 public sealed class NordVpnApiService : INordVpnApiService
 {
     private const string BaseUrl = "https://api.nordvpn.com/v1/servers";
-
-    private readonly HttpClient _client;
-
-    public NordVpnApiService()
-    {
-        _client = new HttpClient();
-    }
     
     public async Task<IEnumerable<ServerModel>> GetAllServersListAsync()
     {
-        var response = await _client.GetAsync(BaseUrl);
-        if (response.StatusCode != HttpStatusCode.OK)
+        try
         {
-            AnsiConsole.MarkupLine($"[red]Failed to get servers list: {response.StatusCode}[/]");
+            return await GetServersAsync(BaseUrl);
+        }
+        catch
+        {
+            AnsiConsole.MarkupLine("[red]Failed to get servers list[/]");
             return Enumerable.Empty<ServerModel>();
         }
-        var body = await response.Content.ReadAsStringAsync();
-        return ParseResponse(body);
     }
 
-    public async Task<IEnumerable<ServerModel>> GetAllServerByCountryListAsync(int countryId)
+    public async Task<IEnumerable<ServerModel>> GetAllServerByCountryListAsync(CountryCode countryCode)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var countryId = (int)countryCode;
+            var requestUrl = $"{BaseUrl}?filters[servers_technologies][id]=35&filters[country_id]={countryId}";
+            return await GetServersAsync(requestUrl);
+        } catch
+        {
+            AnsiConsole.MarkupLine("[red]Failed to get servers list by country[/]");
+            return Enumerable.Empty<ServerModel>();
+        }
     }
 
     public async Task<IEnumerable<ServerModel>> GetAllServerByProtocolListAsync(int vpnProtocol)
@@ -52,5 +57,19 @@ public sealed class NordVpnApiService : INordVpnApiService
             return Enumerable.Empty<ServerModel>();
         }
         return servers;
+    }
+
+    private async Task<IEnumerable<ServerModel>> GetServersAsync(string requestUrl)
+    {
+        var httpClient = new HttpClient();
+        var response = await httpClient.GetAsync(requestUrl);
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            AnsiConsole.MarkupLine($"[red]Failed to get servers list by country: {response.StatusCode}[/]");
+            return Enumerable.Empty<ServerModel>();
+        }
+            
+        var body = await response.Content.ReadAsStringAsync();
+        return ParseResponse(body);
     }
 }

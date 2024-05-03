@@ -1,5 +1,4 @@
 ﻿using partycli.Database.init;
-using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace partycli.cli;

@@ -1,7 +1,6 @@
 using FluentAssertions;
 using Moq;
 using partycli.Database.Repository;
-using partycli.Models.Entities;
 using partycli.Services.App;
 
 namespace UnitTests.Database.Repository;

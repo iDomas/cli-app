@@ -1,8 +1,8 @@
-using partycli.Models.Entities;
+using partycli.Models;
 
 namespace partycli.Services.UI;
 
 public interface IUiService
 {
-    Task DisplayLocalServers();
+    void DisplayServers(DisplayQuery query);
 }
