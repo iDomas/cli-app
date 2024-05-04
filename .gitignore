@@ -397,7 +397,7 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-*/.idea
+**/.idea
 **/partycli.db
 **/partycli.db-shm
 **/partycli.db-wal
