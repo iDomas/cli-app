@@ -38,7 +38,7 @@ public class ConfigRepository(PartyCliDbContext context,
     {
         var lastExists = context.Configs.Any();
         if (lastExists == false) return;
-        var last = context.Configs.Last();
+        var last = context.Configs.OrderBy(c => c.Id).Last();
         last.IsActive = false;
         context.Configs.Update(last);
         context.SaveChanges();

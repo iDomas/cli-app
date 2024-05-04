@@ -39,7 +39,7 @@ public class ServerRepositoryTest
             Status = "offline"
         };
         
-        await _serverRepository.AddServer(server);
+        await _serverRepository.AddServerAsync(server);
         
         var servers = _serverRepository
             .GetServers()
@@ -73,7 +73,7 @@ public class ServerRepositoryTest
             }
         };
         
-        await _serverRepository.AddOrUpdateServers(servers);
+        await _serverRepository.AddOrUpdateServersAsync(servers);
         
         var serversList = _serverRepository
             .GetServers()
@@ -87,5 +87,30 @@ public class ServerRepositoryTest
         serversList.Last().Load.Should().Be(2);
         serversList.Last().Name.Should().Be("Test2");
         serversList.Last().Status.Should().Be("online");
+    }
+    
+    [Fact]
+    public async Task When_GetServerByIdAsync_ThenReturnServer()
+    {
+        var server = new ServerModel()
+        {
+            Load = 1,
+            Name = "Test",
+            Status = "offline"
+        };
+        
+        await _serverRepository.AddServerAsync(server);
+        
+        var serverId = _serverRepository
+            .GetServers()
+            .First()
+            .Id;
+        
+        var serverResult = await _serverRepository.GetServerByIdAsync(serverId);
+        
+        serverResult.Should().NotBeNull();
+        serverResult!.Load.Should().Be(1);
+        serverResult.Name.Should().Be("Test");
+        serverResult.Status.Should().Be("offline");
     }
 }

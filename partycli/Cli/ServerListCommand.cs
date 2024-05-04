@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
+using partycli.cli.Helpers;
 using partycli.Database.init;
 using partycli.Models;
 using partycli.Models.Enums;
 using partycli.Services.UI;
-using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace partycli.cli;
@@ -54,7 +54,7 @@ public sealed class ServerListCommand : Command<ServerListCommand.ServerListComm
         {
             _uiService.DisplayServers(new DisplayQuery(
                 DisplayType.CountryServers,
-                GetCountry(settings.CountryOption)));
+                CountryCodeHelper.GetCountry(settings.CountryOption)));
             return 0;
         }
 
@@ -62,16 +62,4 @@ public sealed class ServerListCommand : Command<ServerListCommand.ServerListComm
             new DisplayQuery(DisplayType.AllServers));
         return 0;
     }
-    
-    private static CountryCode GetCountry(string country)
-    {
-        var countries = Enum.GetNames<CountryCode>();
-        if (!countries.Contains(country, StringComparer.OrdinalIgnoreCase))
-        {
-            AnsiConsole.MarkupLine($"[red]Invalid country code: {country}[/]");
-            throw new ArgumentException("Invalid country code.");
-        }
-        var ignoreCase = country.ToLowerInvariant();
-        return Enum.Parse<CountryCode>(ignoreCase, true);
-    } 
 }

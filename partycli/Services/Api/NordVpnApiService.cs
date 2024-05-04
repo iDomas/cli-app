@@ -53,7 +53,7 @@ public sealed class NordVpnApiService : INordVpnApiService
         }
     }
     
-    private IEnumerable<ServerModel> ParseResponse(string response)
+    private static IEnumerable<ServerModel> ParseResponse(string response)
     {
         IEnumerable<ServerModel> servers;
         try

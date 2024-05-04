@@ -4,8 +4,9 @@ namespace partycli.Database.Repository;
 
 public interface IServerRepository
 {
+    Task<ServerModel?> GetServerByIdAsync(int serverId);
     IQueryable<ServerModel> GetServers();
-    Task AddServer(ServerModel server);
-    Task AddOrUpdateServers(IEnumerable<ServerModel> servers);
+    Task AddServerAsync(ServerModel server);
+    Task AddOrUpdateServersAsync(IEnumerable<ServerModel> servers);
     Task UpdateServerRange(IEnumerable<ServerModel> servers);
 }

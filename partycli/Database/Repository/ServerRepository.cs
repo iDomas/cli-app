@@ -1,21 +1,27 @@
+using Microsoft.EntityFrameworkCore;
 using partycli.Models.Entities;
 
 namespace partycli.Database.Repository;
 
 public class ServerRepository(PartyCliDbContext context) : IServerRepository
 {
+    public async Task<ServerModel?> GetServerByIdAsync(int serverId)
+    {
+        return await context.Servers.Where(s => s.Id == serverId).FirstOrDefaultAsync();
+    }
+
     public IQueryable<ServerModel> GetServers()
     {
         return context.Servers.AsQueryable();
     }
 
-    public async Task AddServer(ServerModel server)
+    public async Task AddServerAsync(ServerModel server)
     {
         await context.Servers.AddAsync(server);
         await context.SaveChangesAsync();
     }
 
-    public async Task AddOrUpdateServers(IEnumerable<ServerModel> servers)
+    public async Task AddOrUpdateServersAsync(IEnumerable<ServerModel> servers)
     {
         var newServers = new List<ServerModel>();
         var savedServers = new List<ServerModel>();

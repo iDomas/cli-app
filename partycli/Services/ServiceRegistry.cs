@@ -18,6 +18,7 @@ public static class ServiceRegistry
             .AddSingleton<INordVpnApiService, NordVpnApiService>()
             .AddSingleton<IServerService, ServerService>()
             .AddSingleton<ILogService, LogService>()
+            .AddSingleton<IConfigService, ConfigService>()
             .AddSingleton<IUiService, UiService>();
     }
 }

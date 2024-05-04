@@ -15,7 +15,12 @@ public class ServerService(
 {
     private const string SavedToContextStr = "[green]Saved to context...[/]";
     private const string FailedToFetchApi = "[red]Failed to get servers from API[/]";
-    
+
+    public async Task<ServerModel?> GetServerByIdAsync(int serverId)
+    {
+        return await serverRepository.GetServerByIdAsync(serverId);
+    }
+
     public async Task<IEnumerable<ServerModel>> GetServersAsync()
     { 
         if (await SaveServersFromApi())
@@ -85,7 +90,7 @@ public class ServerService(
 
     private async Task SaveServerState(IEnumerable<ServerModel> servers)
     {
-        await serverRepository.AddOrUpdateServers(servers);
+        await serverRepository.AddOrUpdateServersAsync(servers);
         await logService.Log(new LogMessage()
         {
             Action = ActionType.ServerSaved,
