@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using partycli.Models.Entities;
 
 namespace partycli.Database.Repository;
@@ -16,9 +15,28 @@ public class ServerRepository(PartyCliDbContext context) : IServerRepository
         await context.SaveChangesAsync();
     }
 
-    public async Task AddServers(IEnumerable<ServerModel> servers)
+    public async Task AddOrUpdateServers(IEnumerable<ServerModel> servers)
     {
-        await context.Servers.AddRangeAsync(servers);
+        var newServers = new List<ServerModel>();
+        var savedServers = new List<ServerModel>();
+        
+        var savedServerIds = context.Servers
+            .Where(server => servers.Select(s => s.Id).Contains(server.Id))
+            .Select(server => server.Id)
+            .ToList();
+        
+        servers
+            .ToList()
+            .ForEach(server =>
+            {
+                if (!savedServerIds.Contains(server.Id))
+                    newServers.Add(server);
+                if (savedServerIds.Contains(server.Id))
+                    savedServers.Add(server);
+            });
+        
+        await UpdateServerRange(savedServers);
+        await context.Servers.AddRangeAsync(newServers);
         await context.SaveChangesAsync();
     }
 

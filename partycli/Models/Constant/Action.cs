@@ -5,7 +5,7 @@ public static class Action
     
     public static Dictionary<ActionType, Func<string, string?>> ActionsMap = new()
     {
-        { ActionType.ServerSaved, (_) => "Saved new server list"},
+        { ActionType.ServerSaved, (serverCount) => $"Saved new server list. Count {serverCount}"},
         { ActionType.ConfigSaved, (name) => $"Changed config to {name}"}
     };
     

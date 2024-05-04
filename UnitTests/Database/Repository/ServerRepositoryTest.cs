@@ -73,7 +73,7 @@ public class ServerRepositoryTest
             }
         };
         
-        await _serverRepository.AddServers(servers);
+        await _serverRepository.AddOrUpdateServers(servers);
         
         var serversList = _serverRepository
             .GetServers()

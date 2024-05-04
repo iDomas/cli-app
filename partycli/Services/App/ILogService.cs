@@ -1,8 +1,8 @@
-using partycli.Models.Constant;
+using partycli.Models;
 
 namespace partycli.Services.App;
 
 public interface ILogService
 {
-    Task Log(ActionType action);
+    Task Log(LogMessage logMessage);
 }

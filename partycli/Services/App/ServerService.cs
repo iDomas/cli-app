@@ -1,4 +1,5 @@
 using partycli.Database.Repository;
+using partycli.Models;
 using partycli.Models.Constant;
 using partycli.Models.Entities;
 using partycli.Models.Enums;
@@ -29,9 +30,7 @@ public class ServerService(
 
     public async Task<IEnumerable<ServerModel>> GetAllServerByCountryListAsync(CountryCode countryCode)
     {
-        var servers = await SaveServersByCountry(countryCode);
-        AnsiConsole.MarkupLine(SavedToContextStr);
-        return servers;
+        return await SaveServersByCountry(countryCode);
     }
 
     public Task<IEnumerable<ServerModel>> GetAllServerByProtocolListAsync()
@@ -44,8 +43,12 @@ public class ServerService(
         try
         {
             var servers = await nordVpnApiService.GetAllServersListAsync();
-            await serverRepository.AddServers(servers);
-            await logService.Log(ActionType.ServerSaved);
+            await serverRepository.AddOrUpdateServers(servers);
+            await logService.Log(new LogMessage()
+            {
+                Action = ActionType.ServerSaved,
+                MessageParam = servers.Count().ToString()
+            });
             return true;
         }
         catch
@@ -60,8 +63,12 @@ public class ServerService(
         try
         {
             var servers = await nordVpnApiService.GetAllServerByCountryListAsync(countryCode);
-            await serverRepository.AddServers(servers);
-            await logService.Log(ActionType.ServerSaved);
+            await serverRepository.AddOrUpdateServers(servers);
+            await logService.Log(new LogMessage()
+            {
+                Action = ActionType.ServerSaved,
+                MessageParam = servers.Count().ToString()
+            });
             return servers;
         }
         catch
