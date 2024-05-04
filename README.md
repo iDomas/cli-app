@@ -2,6 +2,8 @@
 
 This app fetches servers(by country and protocol) and saves data in SQLite daatabse.
 
+**Local sotrage file is created in `Documents` folder**
+
 ## How to use?
 
 #### `server_list`
