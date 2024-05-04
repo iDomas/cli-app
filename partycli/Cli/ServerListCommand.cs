@@ -39,13 +39,14 @@ public sealed class ServerListCommand : Command<ServerListCommand.ServerListComm
     {
         if (settings.TcpOption == true)
         {
-            AnsiConsole.MarkupLine($"TCP option: {settings.TcpOption}");
+            _uiService.DisplayServers(
+                new DisplayQuery(DisplayType.TcpServers, CountryCode.None, Protocol.TCP));
             return 0;
         }
         
         if (settings.LocalOption == true)
         {
-            _uiService.DisplayServers(new DisplayQuery(DisplayType.LocalServers, CountryCode.None));
+            _uiService.DisplayServers(new DisplayQuery(DisplayType.LocalServers));
             return 0;
         }
         
@@ -58,7 +59,7 @@ public sealed class ServerListCommand : Command<ServerListCommand.ServerListComm
         }
 
         _uiService.DisplayServers(
-            new DisplayQuery(DisplayType.AllServers, CountryCode.None));
+            new DisplayQuery(DisplayType.AllServers));
         return 0;
     }
     

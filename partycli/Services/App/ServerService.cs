@@ -33,9 +33,9 @@ public class ServerService(
         return await SaveServersByCountry(countryCode);
     }
 
-    public Task<IEnumerable<ServerModel>> GetAllServerByProtocolListAsync()
+    public async Task<IEnumerable<ServerModel>> GetAllServerByProtocolListAsync(Protocol vpnProtocol)
     {
-        throw new NotImplementedException();
+        return await SaveServersByVpnProtocol(vpnProtocol);
     }
 
     private async Task<bool> SaveServersFromApi()
@@ -43,12 +43,7 @@ public class ServerService(
         try
         {
             var servers = await nordVpnApiService.GetAllServersListAsync();
-            await serverRepository.AddOrUpdateServers(servers);
-            await logService.Log(new LogMessage()
-            {
-                Action = ActionType.ServerSaved,
-                MessageParam = servers.Count().ToString()
-            });
+            await SaveServerState(servers);
             return true;
         }
         catch
@@ -63,12 +58,7 @@ public class ServerService(
         try
         {
             var servers = await nordVpnApiService.GetAllServerByCountryListAsync(countryCode);
-            await serverRepository.AddOrUpdateServers(servers);
-            await logService.Log(new LogMessage()
-            {
-                Action = ActionType.ServerSaved,
-                MessageParam = servers.Count().ToString()
-            });
+            await SaveServerState(servers);
             return servers;
         }
         catch
@@ -76,5 +66,30 @@ public class ServerService(
             AnsiConsole.MarkupLine(FailedToFetchApi);
             return Enumerable.Empty<ServerModel>();
         }
-    } 
+    }
+
+    private async Task<IEnumerable<ServerModel>> SaveServersByVpnProtocol(Protocol vpnProtocol)
+    {
+        try
+        {
+            var servers = await nordVpnApiService.GetAllServerByProtocolListAsync(vpnProtocol);
+            await SaveServerState(servers);
+            return servers;
+        }
+        catch
+        {
+            AnsiConsole.MarkupLine(FailedToFetchApi);
+            return Enumerable.Empty<ServerModel>();
+        }
+    }
+
+    private async Task SaveServerState(IEnumerable<ServerModel> servers)
+    {
+        await serverRepository.AddOrUpdateServers(servers);
+        await logService.Log(new LogMessage()
+        {
+            Action = ActionType.ServerSaved,
+            MessageParam = servers.Count().ToString()
+        });
+    }
 }

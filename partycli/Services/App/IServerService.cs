@@ -8,5 +8,5 @@ public interface IServerService
     Task<IEnumerable<ServerModel>> GetServersAsync();
     Task<IEnumerable<ServerModel>> GetLocalServersAsync();
     Task<IEnumerable<ServerModel>> GetAllServerByCountryListAsync(CountryCode countryCode);
-    Task<IEnumerable<ServerModel>> GetAllServerByProtocolListAsync();
+    Task<IEnumerable<ServerModel>> GetAllServerByProtocolListAsync(Protocol vpnProtocol);
 }

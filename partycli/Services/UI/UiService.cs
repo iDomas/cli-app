@@ -45,7 +45,7 @@ public class UiService(IServerService serverService) : IUiService
                 AnsiConsole.MarkupLine("[red]Error: Country code is not provided[/]");
                 return Enumerable.Empty<ServerModel>().ToList();
             case DisplayType.TcpServers:
-                break;
+                return await serverService.GetAllServerByProtocolListAsync(query.VpnProtocol);
             default:
                 return Enumerable.Empty<ServerModel>().ToList();
         }

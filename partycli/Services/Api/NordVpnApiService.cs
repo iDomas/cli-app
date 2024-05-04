@@ -38,9 +38,19 @@ public sealed class NordVpnApiService : INordVpnApiService
         }
     }
 
-    public async Task<IEnumerable<ServerModel>> GetAllServerByProtocolListAsync(int vpnProtocol)
+    public async Task<IEnumerable<ServerModel>> GetAllServerByProtocolListAsync(Protocol vpnProtocol)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var protocolId = (int)vpnProtocol;
+            var requestUrl = $"{BaseUrl}?filters[servers_technologies][id]={protocolId}";
+            return await GetServersAsync(requestUrl);
+        }
+        catch
+        {
+            AnsiConsole.MarkupLine("[red]Failed to get servers list by protocol[/]");
+            return Enumerable.Empty<ServerModel>();
+        }
     }
     
     private IEnumerable<ServerModel> ParseResponse(string response)
